@@ -12,7 +12,7 @@ Core of InfectionScanner to change the stats.
 --[[ ================================================ ]]--
 
 -- requirements
-local StatTweaker = require "StatTweaker_module"
+local InfectionScanner = require "InfectionScanner_module"
 
 -- localy initialize player
 local client_player = getPlayer()
