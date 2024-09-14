@@ -1,0 +1,6 @@
+ContextMenu_EN = {
+    ContextMenu_InfectionScanner_ScanYourself = "Scan yourself",
+    ContextMenu_InfectionScanner_InsertBattery = "Insert battery",
+    ContextMenu_InfectionScanner_SwapBattery = "Swap battery",
+    ContextMenu_InfectionScanner_RemoveBattery = "Remove battery",
+}

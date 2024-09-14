@@ -1,0 +1,4 @@
+Tooltip_EN = {
+    Tooltip_InfectionScanner_noBattery = "Infection scanner has no battery left.",
+    Tooltip_InfectionScanner_isOFF = "Infection scanner needs to be turned ON.",
+}

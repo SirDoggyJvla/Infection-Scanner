@@ -6,13 +6,13 @@
 --[[ ================================================ ]]--
 --[[
 
-Events of InfectionScanner.
+Defines the spawn of items of InfectionScanner.
 
 ]]--
 --[[ ================================================ ]]--
 
--- requirements
-local InfectionScanner = require "InfectionScanner_module"
-require "InfectionScanner_main"
+OnCreateInfectionScanner = function(item)
+    if not item then return end
 
-Events.OnFillInventoryObjectContextMenu.Add(InfectionScanner.OnFillInventoryObjectContextMenu)
+    item:setUsedDelta(0)
+end

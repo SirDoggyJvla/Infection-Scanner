@@ -1,0 +1,25 @@
+module TLOU {
+
+    item InfectionScanner
+    {
+        DisplayName	=	Infection Scanner,
+        Icon	=	InfectionScanner,
+        DisplayCategory = Electronics,
+        Weight	=	0.3,
+        Type	=	Drainable,
+        UseDelta	=	0.0003,
+        ActivatedItem	=	TRUE,
+        UseWhileEquipped	=	TRUE,
+        DisappearOnUse = FALSE,
+        MetalValue = 10,
+        cantBeConsolided = TRUE,
+        OnCreate = OnCreateInfectionScanner,
+    }
+
+    sound InfectionScanner
+    {
+        category = InfectionScanner, loop = false, is3D = true,
+        clip { file = media/sound/InfectionScannerSound.ogg, distanceMax = 9, volume = 0.80, }
+    }
+
+}
