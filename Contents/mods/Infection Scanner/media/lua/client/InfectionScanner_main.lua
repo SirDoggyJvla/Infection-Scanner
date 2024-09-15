@@ -60,9 +60,8 @@ end
 ---Check if a player is infected with the infection scanner.
 ---@param player any
 InfectionScanner.CheckForInfection = function(player)
-	player:addLineChatElement("checking for infection")
-
-	
+	player:addLineChatElement("scanning...")
+	player:getModData().InfectionScanner_check = os.time()
 end
 
 
@@ -100,7 +99,7 @@ InfectionScanner.OnFillInventoryObjectContextMenu = function(playerIndex, contex
                 option.toolTip = tooltip
 
 			-- scanner needs to be equiped
-			elseif player:getPrimaryHandItem() ~= item or player:getSecondaryHandItem() ~= item then
+			elseif player:getPrimaryHandItem() ~= item then
 				option.notAvailable = true
                 local tooltip = ISWorldObjectContextMenu.addToolTip()
                 tooltip.description = getText("Tooltip_InfectionScanner_needEquiping")
@@ -140,6 +139,32 @@ InfectionScanner.OnFillInventoryObjectContextMenu = function(playerIndex, contex
 			-- add option to remove the battery
 			if charged then
 				option = context:addOption(getText("ContextMenu_InfectionScanner_RemoveBattery"), player, InfectionScanner.RemoveBattery, item, inventory)
+			end
+		end
+	end
+end
+
+InfectionScanner.OnTick = function(tick)
+	local movingObjects = client_player:getCell():getObjectList()
+
+	local movingObject
+	for i = 0,movingObjects:size() - 1 do
+		movingObject = movingObjects:get(i)
+		if instanceof(movingObject,"IsoPlayer") then
+			-- verify scanner check is done
+			local scanner_check = movingObject:getModData().InfectionScanner_check
+			if scanner_check and os.time() - scanner_check >= 0.1 then
+				movingObject:getModData().InfectionScanner_check = nil
+
+				-- give result of scan
+				local isInfected = movingObject:getBodyDamage():IsInfected()
+				if isInfected then
+
+					movingObject:addLineChatElement("positive",1,0,0)
+				else
+
+					movingObject:addLineChatElement("negative",0,1,0)
+				end
 			end
 		end
 	end

@@ -16,3 +16,5 @@ local InfectionScanner = require "InfectionScanner_module"
 require "InfectionScanner_main"
 
 Events.OnFillInventoryObjectContextMenu.Add(InfectionScanner.OnFillInventoryObjectContextMenu)
+
+Events.OnTick.Add(InfectionScanner.OnTick)

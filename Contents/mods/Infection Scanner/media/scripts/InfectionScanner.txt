@@ -1,6 +1,6 @@
-module TLOU {
-
-    item InfectionScanner
+module TLOU
+{
+	item InfectionScanner
     {
         DisplayName	=	Infection Scanner,
         Icon	=	InfectionScanner,
@@ -14,12 +14,27 @@ module TLOU {
         MetalValue = 10,
         cantBeConsolided = TRUE,
         OnCreate = OnCreateInfectionScanner,
+        StaticModel = InfectionScanner_hands,
+            primaryAnimMask = HoldingUmbrellaRight,
+
+        WorldStaticModel = InfectionScanner,
     }
 
-    sound InfectionScanner
+	model InfectionScanner_hands
+	{
+		mesh = scanneroff_hands,
+		texture = scanner_Color,
+	}
+
+	model InfectionScanner
+	{
+		mesh = WorldItems/scanneroff,
+		texture = scanneroff_Color,
+    }
+
+	sound InfectionScanner
     {
         category = InfectionScanner, loop = false, is3D = true,
         clip { file = media/sound/InfectionScannerSound.ogg, distanceMax = 9, volume = 0.80, }
     }
-
 }
