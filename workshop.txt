@@ -1,6 +1,34 @@
 version=1
-id=3331795629
-title=Infection Scanner [BETA]
-description=The Infection Scanner is a tool used to detect whenever a player is infected or not.
-tags=
-visibility=unlisted
+id=3332296598
+title=Infection Scanner
+description=[img]https://raw.githubusercontent.com/SirDoggyJvla/Infection-Scanner/main/Images/preview1.png[/img]
+description=
+description=[quote]
+description=The Infection Scanner is a military tool used by FEDRA in The Last of Us to verify if a human is infected with the cordyceps fungi.
+description=
+description=Ever wondered if you're truly safe from infection? Now you can know for sure!
+description=
+description=[h1]Features:[/h1]
+description=[list]
+description=[*] Scan Yourself: Worried about that scratch or bite? Use the scanner to detect if you're infected before it's too late.
+description=[*] Scan Other Survivors: No more guessing games. Check your companions to ensure they aren't hiding an infection!
+description=[*] Multiplayer Compatible: Scan your friends, or find out if that stranger is a walking death sentence!
+description=[/list]
+description=[/quote]
+description=
+description=[img]https://raw.githubusercontent.com/SirDoggyJvla/Infection-Scanner/main/Images/preview2.png[/img]
+description=[img]https://raw.githubusercontent.com/SirDoggyJvla/Infection-Scanner/main/Images/FEDRA.png[/img]
+description=
+description=[table]
+description=[tr]
+description=[td] [url=https://steamcommunity.com/workshop/filedetails/?id=3243131044] [img]https://steamuserimages-a.akamaihd.net/ugc/2397692528299518994/B476146CBD89A95C3D2172DDA92BC1106E757E30/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false[/img] [/url] [/td]
+description=[td]Native compatibility with [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3268487204]Bandits[/url] ! Allows you to check if friendlies (or enemies !) are infected. [/td]
+description=[/tr]
+description=[/table]
+description=
+description=[hr][/hr]
+description=[url=https://discord.gg/SReMnbV4V7][img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/PZmodCommBanner1.png[/img][/url]
+description=
+description=[url=https://discord.gg/VteSYrd4mW][img]https://raw.githubusercontent.com/SirDoggyJvla/Project-Overgrown/main/images/banners/server_banner.png[/img][/url]
+tags=Build 41;Items;Military;Misc;Models;Multiplayer;Pop Culture
+visibility=public

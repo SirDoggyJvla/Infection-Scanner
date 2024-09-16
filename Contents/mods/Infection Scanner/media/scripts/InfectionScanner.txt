@@ -32,7 +32,22 @@ module TLOU
 		texture = scanneroff_Color,
     }
 
+    recipe Dismantle Infection Scanner
+    {
+       destroy InfectionScanner,
+       keep [Recipe.GetItemTypes.Screwdriver],
 
+       Result:ElectronicsScrap,
+       Time:150.0,
+       OnTest:Recipe.OnTest.DismantleElectronics,
+       OnCreate:Recipe.OnCreate.DismantleInfectionScanner,
+       OnGiveXP:Recipe.OnGiveXP.DismantleInfectionScanner,
+       Category:Electrical,
+       AnimNode:Disassemble,
+       Prop1:Screwdriver,
+       Prop2:InfectionScanner,
+       Sound:Dismantle,
+    }
 
     sound InfectionScanner_start
     {
