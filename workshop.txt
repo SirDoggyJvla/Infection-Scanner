@@ -1,5 +1,6 @@
 version=1
-title=Infection Scanner
+id=3331795629
+title=Infection Scanner [BETA]
 description=The Infection Scanner is a tool used to detect whenever a player is infected or not.
 tags=
-visibility=public
+visibility=unlisted

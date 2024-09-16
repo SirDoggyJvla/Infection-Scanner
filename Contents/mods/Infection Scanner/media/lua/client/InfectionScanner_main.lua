@@ -16,6 +16,9 @@ local InfectionScanner = require "InfectionScanner_module"
 require "TimedActions/ISInsertBattery"
 require "TimedActions/ISRemoveBattery"
 
+-- compatible patches
+local activatedMods_Bandits = getActivatedMods():contains("Bandits")
+
 -- localy initialize player
 local client_player = getPlayer()
 local function initTLOU_OnGameStart(playerIndex, player_init)
@@ -23,6 +26,32 @@ local function initTLOU_OnGameStart(playerIndex, player_init)
 end
 Events.OnCreatePlayer.Remove(initTLOU_OnGameStart)
 Events.OnCreatePlayer.Add(initTLOU_OnGameStart)
+
+-- define the list for the scanned
+InfectionScanner.Scanned = {}
+
+---Verify `movingObject` is in range of `player` to scan.
+---@param p_x float
+---@param p_y float
+---@param p_z float
+---@param movingObject IsoMovingObject
+---@return boolean
+InfectionScanner.CheckInRange = function(p_x,p_y,p_z,movingObject)
+	-- verify height is the same
+	local m_z = movingObject:getZ()
+	local h = p_z - m_z
+	h = h < 0 and -h or h
+	if h < 0.25 then
+		-- verify distance is the same
+		local m_x = movingObject:getX()
+		local m_y = movingObject:getY()
+
+		local d = ( (m_x - p_x)^2 + (m_y - p_y)^2 )
+		return d < 2
+	end
+
+	return false
+end
 
 ---Change the battery from the scanner.
 ---@param player IsoPlayer
@@ -58,12 +87,66 @@ InfectionScanner.isBattery = function(item)
 end
 
 ---Check if a player is infected with the infection scanner.
----@param player any
-InfectionScanner.CheckForInfection = function(player)
-	player:addLineChatElement("scanning...")
-	player:getModData().InfectionScanner_check = os.time()
+---@param checker IsoPlayer
+---@param scanned IsoMovingObject
+InfectionScanner.CheckForInfection = function(checker,scanned)
+	checker:addLineChatElement("scanning...")
+	InfectionScanner.Scanned[scanned] = os.time()
+	scanned:addLineChatElement("target of scan")
+
+	checker:getEmitter():playSound('InfectionScanner_run')
+	addSound(nil, checker:getX(), checker:getY(), checker:getZ(), 7, 7)
 end
 
+---Add to `context` an option for the `checker` to scan the `scanned` with the predefined `text`.
+---Various states can be given to make the option not available to click:
+--- - `inRanged`
+--- - `equiped`
+--- - `charged`
+--- - `activated`
+---@param context table
+---@param checker IsoPlayer
+---@param scanned IsoMovingObject
+---@param inRange boolean
+---@param equiped boolean
+---@param charged boolean
+---@param activated boolean
+---@param text string
+InfectionScanner.AddScannerOptionToContext = function(context,checker,scanned,inRange,equiped,charged,activated,text)
+	local option = context:addOption(getText(text),checker,InfectionScanner.CheckForInfection,scanned)
+
+	-- scanner has no battery
+	if not inRange then
+		option.notAvailable = true
+		local tooltip = ISWorldObjectContextMenu.addToolTip()
+		tooltip.description = getText("Tooltip_InfectionScanner_notInRange")
+		option.toolTip = tooltip
+
+	-- scanner needs to be equiped
+	elseif not equiped then
+		option.notAvailable = true
+		local tooltip = ISWorldObjectContextMenu.addToolTip()
+		tooltip.description = getText("Tooltip_InfectionScanner_needEquiping")
+		option.toolTip = tooltip
+
+	-- scanner needs to be ON
+	elseif not activated then
+		option.notAvailable = true
+		local tooltip = ISWorldObjectContextMenu.addToolTip()
+		tooltip.description = getText("Tooltip_InfectionScanner_isOFF")
+		option.toolTip = tooltip
+
+	-- scanner needs to be charged
+	elseif not charged then
+		option.notAvailable = true
+		local tooltip = ISWorldObjectContextMenu.addToolTip()
+		tooltip.description = getText("Tooltip_InfectionScanner_noBattery")
+		option.toolTip = tooltip
+
+
+
+	end
+end
 
 
 ---When right clicking the scanner, show options to add or remove battery and scan yourself.
@@ -73,6 +156,8 @@ end
 InfectionScanner.OnFillInventoryObjectContextMenu = function(playerIndex, context, items)
 	-- retrieve player
 	local player = getSpecificPlayer(playerIndex)
+
+	local equipedItem = player:getPrimaryHandItem()
 
 	-- check if item is scanner
 	local item
@@ -84,35 +169,13 @@ InfectionScanner.OnFillInventoryObjectContextMenu = function(playerIndex, contex
         end
 
 		if item:getFullType() == "TLOU.InfectionScanner" then
-			-- Do something
-			print("Scanner detected")
-			local option = context:addOption(getText("ContextMenu_InfectionScanner_ScanYourself"),player,InfectionScanner.CheckForInfection)
-
 			-- check if scanner is charged
 			local charged = item:getUsedDelta() ~= 0
+			local equiped = equipedItem and equipedItem == item
+			print(equiped)
 
-			-- scanner has no battery
-			if not charged then
-				option.notAvailable = true
-                local tooltip = ISWorldObjectContextMenu.addToolTip()
-                tooltip.description = getText("Tooltip_InfectionScanner_noBattery")
-                option.toolTip = tooltip
-
-			-- scanner needs to be equiped
-			elseif player:getPrimaryHandItem() ~= item then
-				option.notAvailable = true
-                local tooltip = ISWorldObjectContextMenu.addToolTip()
-                tooltip.description = getText("Tooltip_InfectionScanner_needEquiping")
-                option.toolTip = tooltip
-
-			-- scanner needs to be ON
-			elseif not item:isActivated() then
-				option.notAvailable = true
-                local tooltip = ISWorldObjectContextMenu.addToolTip()
-                tooltip.description = getText("Tooltip_InfectionScanner_isOFF")
-                option.toolTip = tooltip
-
-			end
+			-- add option to scan yourself
+			InfectionScanner.AddScannerOptionToContext(context,player,player,true,equiped,charged,item:isActivated(),"ContextMenu_InfectionScanner_ScanYourself")
 
 			-- retrieve batteries in the inventory
 			local inventory = player:getInventory()
@@ -120,6 +183,7 @@ InfectionScanner.OnFillInventoryObjectContextMenu = function(playerIndex, contex
 			inventory:getAllEvalRecurse(InfectionScanner.isBattery, batteries)
 
 			-- create the submenu to insert or swap a battery
+			local option
 			if not charged then
 				option = context:addOption(getText("ContextMenu_InfectionScanner_InsertBattery"))
 			else
@@ -128,6 +192,7 @@ InfectionScanner.OnFillInventoryObjectContextMenu = function(playerIndex, contex
 			local subMenu = context:getNew(context)
 			context:addSubMenu(option, subMenu)
 
+			-- add every as an option to insert or swap battery
 			local battery
 			for j = 0,batteries:size() - 1 do
 				battery = batteries:get(j)
@@ -136,7 +201,7 @@ InfectionScanner.OnFillInventoryObjectContextMenu = function(playerIndex, contex
 				subMenu:addOption(battery:getDisplayName()..":  "..repairPercent, player, InfectionScanner.ChangeBattery, item, battery, inventory)
 			end
 
-			-- add option to remove the battery
+			-- add option to remove the battery if present
 			if charged then
 				option = context:addOption(getText("ContextMenu_InfectionScanner_RemoveBattery"), player, InfectionScanner.RemoveBattery, item, inventory)
 			end
@@ -144,28 +209,125 @@ InfectionScanner.OnFillInventoryObjectContextMenu = function(playerIndex, contex
 	end
 end
 
-InfectionScanner.OnTick = function(tick)
-	local movingObjects = client_player:getCell():getObjectList()
+InfectionScanner.OnFillWorldObjectContextMenu = function(playerIndex, context, worldObjects, test)
+	-- get player
+	local player = getSpecificPlayer(playerIndex)
 
-	local movingObject
-	for i = 0,movingObjects:size() - 1 do
-		movingObject = movingObjects:get(i)
-		if instanceof(movingObject,"IsoPlayer") then
-			-- verify scanner check is done
-			local scanner_check = movingObject:getModData().InfectionScanner_check
-			if scanner_check and os.time() - scanner_check >= 0.1 then
-				movingObject:getModData().InfectionScanner_check = nil
+	-- verify player has scanner in hand
+	local scanner = player:getPrimaryHandItem()
+	if not scanner or scanner:getFullType() ~= "TLOU.InfectionScanner" then return end
 
-				-- give result of scan
-				local isInfected = movingObject:getBodyDamage():IsInfected()
-				if isInfected then
+	-- check if scanner is charged
+	local charged = scanner:getUsedDelta() ~= 0
+	local activated = scanner:isActivated()
 
-					movingObject:addLineChatElement("positive",1,0,0)
-				else
+	-- get player coordinates
+	local p_x = player:getX()
+	local p_y = player:getY()
+	local p_z = player:getZ()
 
-					movingObject:addLineChatElement("negative",0,1,0)
+    -- objects can be in duplicate in the `worldObjects` for some reasons
+    local objects = {}
+    for i = 1,#worldObjects + 1 do
+        objects[worldObjects[i]] = true
+    end
+
+    -- iterate through every objects
+	local alreadyChecked = {}
+	local o_x,o_y,o_z,h,inRange,square,movingObjects,movingObject,option
+    for object,_ in pairs(objects) do
+		-- verify player is on same height
+		o_z = object:getZ()
+		h = o_z - p_z
+		h = h < 0 and -h or h
+
+		-- verify object is in range
+		if h < 1 then
+			-- verify object is in range
+			o_x = object:getX()
+			o_y = object:getY()
+
+			-- iterate through adjacent squares
+			for i = -1,1,1 do
+				for j = -1,1,1 do
+					-- retrieve moving objects
+					square = getSquare(o_x + i,o_y + j,o_z)
+					movingObjects = square:getMovingObjects()
+					for k = 0, movingObjects:size() - 1 do
+						movingObject = movingObjects:get(k)
+
+						-- verify object was not already checked (happens when 2 objects with the same movingObjects)
+						if not alreadyChecked[movingObject] then
+							alreadyChecked[movingObject] = true
+
+							-- verify movingObject is the player calling the context menu
+							if movingObject ~= player then
+
+								-- verify player can see movingObject
+								if player:CanSee(movingObject) then
+									-- movingObject is a player
+									if instanceof(movingObject,"IsoPlayer") then
+										-- verify movingObject is in range
+										inRange = InfectionScanner.CheckInRange(p_x,p_y,p_z,movingObject)
+										InfectionScanner.AddScannerOptionToContext(context,player,movingObject,inRange,true,charged,activated,"ContextMenu_InfectionScanner_ScanHuman")
+
+									-- movingObject is a zombie, verify if human from Bandits
+									elseif activatedMods_Bandits and instanceof(movingObject,"IsoZombie") then
+										local brain = BanditBrain.Get(movingObject)
+										if movingObject:getVariableBoolean("Bandit") or brain then
+											-- it's a human, check for infection too
+											inRange = InfectionScanner.CheckInRange(p_x,p_y,p_z,movingObject)
+											InfectionScanner.AddScannerOptionToContext(context,player,movingObject,inRange,true,charged,activated,"ContextMenu_InfectionScanner_ScanHuman")
+										end
+									end
+								end
+							else
+								InfectionScanner.AddScannerOptionToContext(context,player,movingObject,true,true,charged,activated,"ContextMenu_InfectionScanner_ScanYourself")
+
+							end
+						end
+					end
 				end
 			end
 		end
+	end
+end
+
+InfectionScanner.OnTick = function(tick)
+	for scanned,time in pairs(InfectionScanner.Scanned) do
+		if os.time() - time >= 1.4 then
+			InfectionScanner.Scanned[scanned] = nil
+
+			-- check if scanned is infected based on its class
+			local isInfected
+			if instanceof(scanned,"IsoPlayer") then
+				isInfected = scanned:getBodyDamage():IsInfected()
+			elseif instanceof(scanned,"IsoZombie") then
+				if activatedMods_Bandits then
+					local brain = BanditBrain.Get(scanned)
+					local infection = brain.infection
+					if infection and infection > 0 then
+						isInfected = true
+					end
+				end
+			end
+
+			-- give result of scan
+			if isInfected then
+				client_player:addLineChatElement("positive",1,0,0)
+			else
+				client_player:addLineChatElement("negative",0,1,0)
+			end
+		end
+	end
+end
+
+---When equiping the item, play a sound of it turning on.
+---@param character any
+---@param inventoryItem any
+InfectionScanner.OnEquipPrimary = function(character, inventoryItem)
+	if character == client_player and inventoryItem and inventoryItem:getFullType() == "TLOU.InfectionScanner" then
+		character:getEmitter():playSound('InfectionScanner_start')
+		addSound(nil, character:getX(), character:getY(), character:getZ(), 7, 7)
 	end
 end

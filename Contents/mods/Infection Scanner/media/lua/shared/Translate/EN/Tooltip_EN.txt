@@ -1,4 +1,5 @@
 Tooltip_EN = {
+    Tooltip_InfectionScanner_notInRange = "Not in range of the target to scan.",
     Tooltip_InfectionScanner_noBattery = "Infection scanner has no battery left.",
     Tooltip_InfectionScanner_isOFF = "Infection scanner needs to be turned ON.",
     Tooltip_InfectionScanner_needEquiping = "Infection scanner needs to be held in the main hand.",

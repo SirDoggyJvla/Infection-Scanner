@@ -32,9 +32,17 @@ module TLOU
 		texture = scanneroff_Color,
     }
 
-	sound InfectionScanner
+
+
+    sound InfectionScanner_start
     {
         category = InfectionScanner, loop = false, is3D = true,
-        clip { file = media/sound/InfectionScannerSound.ogg, distanceMax = 9, volume = 0.80, }
+        clip { file = media/sound/InfectionScanner/InfectionScanner_start.ogg, distanceMax = 2, volume = 0.80, }
+    }
+
+    sound InfectionScanner_run
+    {
+        category = InfectionScanner, loop = false, is3D = true,
+        clip { file = media/sound/InfectionScanner/InfectionScanner_run.ogg, distanceMax = 2, volume = 0.80, }
     }
 }
