@@ -11,6 +11,6 @@ Module of StatTweaker to change the stats.
 ]]--
 --[[ ================================================ ]]--
 
-local InfectionScanner = {}
+local InfectionScanner = {Scanned = {}}
 
 return InfectionScanner

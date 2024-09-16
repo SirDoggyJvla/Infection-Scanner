@@ -27,9 +27,6 @@ end
 Events.OnCreatePlayer.Remove(initTLOU_OnGameStart)
 Events.OnCreatePlayer.Add(initTLOU_OnGameStart)
 
--- define the list for the scanned
-InfectionScanner.Scanned = {}
-
 ---Verify `movingObject` is in range of `player` to scan.
 ---@param p_x float
 ---@param p_y float
@@ -91,9 +88,29 @@ end
 ---@param scanned IsoMovingObject
 InfectionScanner.CheckForInfection = function(checker,scanned)
 	checker:addLineChatElement("scanning...")
-	InfectionScanner.Scanned[scanned] = os.time()
+
+	-- note the scanned for checking later
+	InfectionScanner.Scanned[scanned] = {time = os.time(),result = ""}
+
+	-- in MP, ask for answer
+	if instanceof(scanned,"IsoPlayer") then
+	---@cast scanned IsoPlayer
+
+		-- if SP or checker is scanned then directly note the result
+		if not isClient() or checker == scanned then
+			local isInfected = scanned:getBodyDamage():IsInfected()
+			InfectionScanner.Scanned[scanned].result = isInfected and "Infected" or "notInfected"
+
+		-- if MP, the result needs to be received from the scanned
+		else
+			sendClientCommand('InfectionScanner','AskIfInfected',{scannedID = scanned:getOnlineID(),checkerID = checker:getOnlineID()})
+			InfectionScanner.Scanned[scanned].result = "Waiting"
+		end
+	end
+
 	scanned:addLineChatElement("target of scan")
 
+	-- play sound of the scanner (automatically synced)
 	checker:getEmitter():playSound('InfectionScanner_run')
 	addSound(nil, checker:getX(), checker:getY(), checker:getZ(), 7, 7)
 end
@@ -172,7 +189,6 @@ InfectionScanner.OnFillInventoryObjectContextMenu = function(playerIndex, contex
 			-- check if scanner is charged
 			local charged = item:getUsedDelta() ~= 0
 			local equiped = equipedItem and equipedItem == item
-			print(equiped)
 
 			-- add option to scan yourself
 			InfectionScanner.AddScannerOptionToContext(context,player,player,true,equiped,charged,item:isActivated(),"ContextMenu_InfectionScanner_ScanYourself")
@@ -234,7 +250,7 @@ InfectionScanner.OnFillWorldObjectContextMenu = function(playerIndex, context, w
 
     -- iterate through every objects
 	local alreadyChecked = {}
-	local o_x,o_y,o_z,h,inRange,square,movingObjects,movingObject,option
+	local o_x,o_y,o_z,h,inRange,square,movingObjects,movingObject,option,valid
     for object,_ in pairs(objects) do
 		-- verify player is on same height
 		o_z = object:getZ()
@@ -294,14 +310,29 @@ InfectionScanner.OnFillWorldObjectContextMenu = function(playerIndex, context, w
 end
 
 InfectionScanner.OnTick = function(tick)
-	for scanned,time in pairs(InfectionScanner.Scanned) do
-		if os.time() - time >= 1.4 then
+	local time, result
+	for scanned,tbl in pairs(InfectionScanner.Scanned) do
+		time = os.time() - tbl.time
+		result = tbl.result
+
+		-- waited too long
+		if time >= 5 then
+			client_player:addLineChatElement("error",1,0.5,0)
+
+			-- remove scanned from list to scan
 			InfectionScanner.Scanned[scanned] = nil
+
+		-- time elapsed and got the answer needed
+		elseif time >= 1.4 and result ~= "Waiting" then
 
 			-- check if scanned is infected based on its class
 			local isInfected
+
+			-- check player
 			if instanceof(scanned,"IsoPlayer") then
-				isInfected = scanned:getBodyDamage():IsInfected()
+				isInfected = result == "Infected"
+
+			-- check bandit
 			elseif instanceof(scanned,"IsoZombie") then
 				if activatedMods_Bandits then
 					local brain = BanditBrain.Get(scanned)
@@ -318,6 +349,9 @@ InfectionScanner.OnTick = function(tick)
 			else
 				client_player:addLineChatElement("negative",0,1,0)
 			end
+
+			-- remove scanned from list to scan
+			InfectionScanner.Scanned[scanned] = nil
 		end
 	end
 end
