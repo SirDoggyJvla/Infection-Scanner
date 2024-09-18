@@ -167,7 +167,7 @@ InfectionScanner.OnFillInventoryObjectContextMenu = function(playerIndex, contex
 				item:getModData().InfectionScanner_mode = "Scanning"
 				scannerMode = "Scanning"
 			end
-			print("scannerMode = "..scannerMode)
+
 			local scannerModeName = getText("ContextMenu_InfectionScanner_Mode"..scannerMode)
 
 			-- change mode
@@ -204,7 +204,6 @@ InfectionScanner.OnFillInventoryObjectContextMenu = function(playerIndex, contex
 				for k,v in pairs(InfectionScanner.Modes) do
 					optionName = getText("ContextMenu_InfectionScanner_Mode"..k)
 					func = InfectionScanner[v.func]
-					print("optionName = "..optionName)
 
 					option = subMenu:addOption(optionName, player, func, item)
 
@@ -550,7 +549,6 @@ InfectionScanner.OnTick = function(tick)
 
 						--- CLOSE TO A SPORE ZONE ---
 
-						InfectionScanner.highlightsSquares = {}
 						if not emitter:isPlaying('InfectionScanner_SporeZone2') then
 							-- detection radius
 							local radius = SandboxVars.InfectionScanner.SporeZoneRadius
@@ -562,7 +560,6 @@ InfectionScanner.OnTick = function(tick)
 
 							-- retrieve nearest spore zone square
 							local square,dist = InfectionScanner.findNearestValidSquare(p_x,p_y,p_z,radius,InfectionScanner.isSquareSporeZone)
-							InfectionScanner.AddHighlightSquare(square,{r = 1,g = 1,b = 1})
 
 							-- check if something is detected
 							if dist then
