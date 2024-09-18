@@ -13,11 +13,14 @@ Core of InfectionScanner to change the stats.
 
 -- requirements
 local InfectionScanner = require "InfectionScanner_module"
-require "TimedActions/ISInsertBattery"
-require "TimedActions/ISRemoveBattery"
 
 -- compatible patches
 local activatedMods_Bandits = getActivatedMods():contains("Bandits")
+local activatedMods_SporeZones = getActivatedMods():contains("BB_SporeZones")
+
+if activatedMods_SporeZones then
+	InfectionScanner.Modes["SporeDetector"] = {func = "Change2SporeDetector"}
+end
 
 -- localy initialize player
 local client_player = getPlayer()
@@ -26,6 +29,7 @@ local function initTLOU_OnGameStart(playerIndex, player_init)
 end
 Events.OnCreatePlayer.Remove(initTLOU_OnGameStart)
 Events.OnCreatePlayer.Add(initTLOU_OnGameStart)
+
 
 ---Verify `movingObject` is in range of `player` to scan.
 ---@param p_x float
@@ -50,70 +54,23 @@ InfectionScanner.CheckInRange = function(p_x,p_y,p_z,movingObject)
 	return false
 end
 
----Change the battery from the scanner.
----@param player IsoPlayer
----@param scanner InventoryItem
----@param battery Drainable
----@param inventory ItemContainer
-InfectionScanner.ChangeBattery = function(player,scanner,battery,inventory)
-	-- transfer scanner and battery in main inventory if not in it
-	ISInventoryPaneContextMenu.transferIfNeeded(player, battery)
-	ISInventoryPaneContextMenu.transferIfNeeded(player, scanner)
 
-	-- add an action to change battery
-	ISTimedActionQueue.add(InfectionScanner_ISInsertBattery:new(player,scanner,battery,inventory,20))
-end
 
----Remove the battery from the scanner.
----@param player IsoPlayer
----@param scanner InventoryItem
----@param inventory ItemContainer
-InfectionScanner.RemoveBattery = function(player,scanner,inventory)
-	-- transfer scanner in main inventory if not in it
-	ISInventoryPaneContextMenu.transferIfNeeded(player, scanner)
-
-	-- add an action to remove battery
-	ISTimedActionQueue.add(InfectionScanner_ISRemoveBattery:new(player,scanner,inventory,20))
-end
-
----Test function to recursively find every batteries that are not dead in the inventory.
+---Test function to recursively find batteries that are not dead in the inventory.
 ---@param item InventoryItem
 ---@return boolean
 InfectionScanner.isBattery = function(item)
 	return item:getType() == "Battery" and item:getUsedDelta() ~= 0
 end
 
----Check if a player is infected with the infection scanner.
----@param checker IsoPlayer
----@param scanned IsoMovingObject
-InfectionScanner.CheckForInfection = function(checker,scanned)
-	checker:addLineChatElement("scanning...")
 
-	-- note the scanned for checking later
-	InfectionScanner.Scanned[scanned] = {time = os.time(),result = ""}
-
-	-- in MP, ask for answer
-	if instanceof(scanned,"IsoPlayer") then
-	---@cast scanned IsoPlayer
-
-		-- if SP or checker is scanned then directly note the result
-		if not isClient() or checker == scanned then
-			local isInfected = scanned:getBodyDamage():IsInfected()
-			InfectionScanner.Scanned[scanned].result = isInfected and "Infected" or "notInfected"
-
-		-- if MP, the result needs to be received from the scanned
-		else
-			sendClientCommand('InfectionScanner','AskIfInfected',{scannedID = scanned:getOnlineID(),checkerID = checker:getOnlineID()})
-			InfectionScanner.Scanned[scanned].result = "Waiting"
-		end
-	end
-
-	scanned:addLineChatElement("target of scan")
-
-	-- play sound of the scanner (automatically synced)
-	checker:getEmitter():playSound('InfectionScanner_run')
-	addSound(nil, checker:getX(), checker:getY(), checker:getZ(), 7, 7)
+---Test function to recursively find scanners in the inventory.
+---@param item InventoryItem
+---@return boolean
+InfectionScanner.isScanner = function(item)
+	return item:getFullType() == "TLOU.InfectionScanner"
 end
+
 
 ---Add to `context` an option for the `checker` to scan the `scanned` with the predefined `text`.
 ---Various states can be given to make the option not available to click:
@@ -160,8 +117,6 @@ InfectionScanner.AddScannerOptionToContext = function(context,checker,scanned,in
 		tooltip.description = getText("Tooltip_InfectionScanner_noBattery")
 		option.toolTip = tooltip
 
-
-
 	end
 end
 
@@ -185,42 +140,161 @@ InfectionScanner.OnFillInventoryObjectContextMenu = function(playerIndex, contex
             item = item.items[1];
         end
 
+		-- if item is a scanner
 		if item:getFullType() == "TLOU.InfectionScanner" then
-			-- check if scanner is charged
-			local charged = item:getUsedDelta() ~= 0
-			local equiped = equipedItem and equipedItem == item
-
-			-- add option to scan yourself
-			InfectionScanner.AddScannerOptionToContext(context,player,player,true,equiped,charged,item:isActivated(),"ContextMenu_InfectionScanner_ScanYourself")
+			local option
+			local subMenu
+			--- GET SCANNER DATA ---
 
 			-- retrieve batteries in the inventory
 			local inventory = player:getInventory()
 			local batteries = ArrayList.new()
 			inventory:getAllEvalRecurse(InfectionScanner.isBattery, batteries)
+			local batteriesAmount = batteries:size()
+
+			-- check if scanner is charged, equiped and activated
+			local charged = item:getUsedDelta() ~= 0
+			local equiped = equipedItem and equipedItem == item
+			local scanner_modData = item:getModData()
+			local activated = item:isActivated()
+
+
+			--- CHANGE MODE OF SCANNER ---
+
+			-- get mode
+			local scannerMode = scanner_modData.InfectionScanner_mode
+			if not scannerMode then
+				item:getModData().InfectionScanner_mode = "Scanning"
+				scannerMode = "Scanning"
+			end
+			print("scannerMode = "..scannerMode)
+			local scannerModeName = getText("ContextMenu_InfectionScanner_Mode"..scannerMode)
+
+			-- change mode
+			-- create the option to change mode
+			option = context:addOption(getText("ContextMenu_InfectionScanner_ChangeMode",scannerModeName))
+			if not equiped then
+				option.notAvailable = true
+				local tooltip = ISWorldObjectContextMenu.addToolTip()
+				tooltip.description = getText("Tooltip_InfectionScanner_needEquiping")
+				option.toolTip = tooltip
+
+			-- scanner needs to be ON
+			elseif not activated then
+				option.notAvailable = true
+				local tooltip = ISWorldObjectContextMenu.addToolTip()
+				tooltip.description = getText("Tooltip_InfectionScanner_isOFF")
+				option.toolTip = tooltip
+
+			-- scanner needs to be charged
+			elseif not charged then
+				option.notAvailable = true
+				local tooltip = ISWorldObjectContextMenu.addToolTip()
+				tooltip.description = getText("Tooltip_InfectionScanner_noBattery")
+				option.toolTip = tooltip
+
+			-- valid to change mode
+			else
+				-- create the submenu to change mode
+				subMenu = context:getNew(context)
+				context:addSubMenu(option, subMenu)
+
+				-- add every modes as an option
+				local optionName, func
+				for k,v in pairs(InfectionScanner.Modes) do
+					optionName = getText("ContextMenu_InfectionScanner_Mode"..k)
+					func = InfectionScanner[v.func]
+					print("optionName = "..optionName)
+
+					option = subMenu:addOption(optionName, player, func, item)
+
+					-- already in this mode
+					if k == scannerMode then
+						option.notAvailable = true
+					end
+
+					-- scanner needs to be equiped
+					if not equiped then
+						option.notAvailable = true
+						local tooltip = ISWorldObjectContextMenu.addToolTip()
+						tooltip.description = getText("Tooltip_InfectionScanner_needEquiping")
+						option.toolTip = tooltip
+
+					-- scanner needs to be ON
+					elseif not activated then
+						option.notAvailable = true
+						local tooltip = ISWorldObjectContextMenu.addToolTip()
+						tooltip.description = getText("Tooltip_InfectionScanner_isOFF")
+						option.toolTip = tooltip
+
+					-- scanner needs to be charged
+					elseif not charged then
+						option.notAvailable = true
+						local tooltip = ISWorldObjectContextMenu.addToolTip()
+						tooltip.description = getText("Tooltip_InfectionScanner_noBattery")
+						option.toolTip = tooltip
+
+					-- add the tooltip of the mode
+					else
+						local tooltip = ISWorldObjectContextMenu.addToolTip()
+						tooltip.description = getText("Tooltip_InfectionScanner_Mode"..k)
+						option.toolTip = tooltip
+
+					end
+				end
+			end
+
+
+			--- SCANNING MODE ---
+
+			if scannerMode == "Scanning" then
+				
+				InfectionScanner.AddScannerOptionToContext(context,player,player,true,equiped,charged,activated,"ContextMenu_InfectionScanner_ScanYourself")
+			
+			elseif scannerMode == "SporeDetector" then
+				
+			
+			end
+
+
+			--- HANDLE BATTERY ---
+
 
 			-- create the submenu to insert or swap a battery
-			local option
 			if not charged then
 				option = context:addOption(getText("ContextMenu_InfectionScanner_InsertBattery"))
 			else
 				option = context:addOption(getText("ContextMenu_InfectionScanner_SwapBattery"))
 			end
-			local subMenu = context:getNew(context)
-			context:addSubMenu(option, subMenu)
 
-			-- add every as an option to insert or swap battery
-			local battery
-			for j = 0,batteries:size() - 1 do
-				battery = batteries:get(j)
+			-- if not batteries, then make option unavailable
+			if batteriesAmount > 0 then
+				subMenu = context:getNew(context)
+				context:addSubMenu(option, subMenu)
 
-				local repairPercent = math.floor(battery:getUsedDelta() * 100.0).."%"
-				subMenu:addOption(battery:getDisplayName()..":  "..repairPercent, player, InfectionScanner.ChangeBattery, item, battery, inventory)
+				-- add every battery as an option to insert or swap battery
+				local battery
+				for j = 0,batteriesAmount - 1 do
+					battery = batteries:get(j)
+
+					local repairPercent = math.floor(battery:getUsedDelta() * 100.0).."%"
+					subMenu:addOption(battery:getDisplayName()..":  "..repairPercent, player, InfectionScanner.ChangeBattery, item, battery, inventory)
+				end
+			else
+				option.notAvailable = true
+				local tooltip = ISWorldObjectContextMenu.addToolTip()
+				tooltip.description = getText("Tooltip_InfectionScanner_noBatteriesAvailable")
+				option.toolTip = tooltip
 			end
 
 			-- add option to remove the battery if present
 			if charged then
 				option = context:addOption(getText("ContextMenu_InfectionScanner_RemoveBattery"), player, InfectionScanner.RemoveBattery, item, inventory)
 			end
+
+
+			--- ONLY ADD OPTIONS FOR A SINGLE SCANNER ---
+			break
 		end
 	end
 end
@@ -309,10 +383,83 @@ InfectionScanner.OnFillWorldObjectContextMenu = function(playerIndex, context, w
 	end
 end
 
+
+---Determines the closest square and its distance to the start points based on a validation function.
+---
+---Checks within a `radius` and in circle starting from the start points and going outward.
+---Also checks one floor below and above, based on Project Zomboid height limits.
+---@param startX number
+---@param startY number
+---@param startZ number
+---@param radius int
+---@param isValid function
+---@return IsoGridSquare|nil
+---@return number|nil
+InfectionScanner.findNearestValidSquare = function(startX, startY , startZ, radius, isValid)
+	-- makes sure the player doesn't do weird shit when at the world height limit
+	local min_h = startZ - 1
+	min_h = min_h < 0 and 0 or min_h > 7 and 7 or min_h
+	local max_h = startZ + 1
+	max_h = max_h < 0 and 0 or max_h > 7 and 7 or max_h
+
+	-- iterate through every directions, starting at the nearest circle
+	local directions = InfectionScanner.DirectionCheck
+	local direction,increase,x,y,x_dir,y_dir,square,d
+	local nearestDistance, nearestSquare
+	for r = 1,radius do
+		-- retrieve directions
+		direction = directions[r]
+		if direction then
+			-- iterate through every directions pointing to the circle coordinates
+			for i = 1,#direction do
+				-- retrieve the direction coordinates
+				increase = direction[i]
+				x_dir = increase[1]
+				y_dir = increase[2]
+
+				-- calculates point to check coordinates
+				x = startX + x_dir
+				y = startY + y_dir
+
+				-- check within every floors
+				for h = min_h,max_h do
+					-- get square
+					square = getSquare(x,y,h)
+
+					-- verify square is valid
+					if square and isValid(square) then
+						-- get distance
+						d = ( x_dir*x_dir + y_dir*y_dir )^0.5
+
+						-- keep track as nearest square
+						if nearestDistance then
+							if d < nearestDistance then
+								nearestDistance = d
+								nearestSquare = square
+							end
+						else
+							nearestDistance = d
+							nearestSquare = square
+						end
+					end
+				end
+			end
+
+			-- a square was found, stop here
+			if nearestSquare then
+				return nearestSquare, nearestDistance
+			end
+		end
+	end
+
+	return nil, nil
+end
+
 InfectionScanner.OnTick = function(tick)
+	local current_time = os.time()
 	local time, result
 	for scanned,tbl in pairs(InfectionScanner.Scanned) do
-		time = os.time() - tbl.time
+		time = current_time - tbl.time
 		result = tbl.result
 
 		-- waited too long
@@ -354,6 +501,102 @@ InfectionScanner.OnTick = function(tick)
 			InfectionScanner.Scanned[scanned] = nil
 		end
 	end
+
+
+	-- Cordyceps Spore Zone compatibility spore detection
+	if activatedMods_SporeZones then
+		-- cache emitters
+		local emitter = client_player:getEmitter()
+		local sporeZoneDetectorEmitter1 = emitter:isPlaying('InfectionScanner_SporeZone1')
+		local sporeZoneDetectorEmitter2 = emitter:isPlaying('InfectionScanner_SporeZone2')
+
+		-- we don't need to do any check if any of these emitters are playing
+		if sporeZoneDetectorEmitter1 or sporeZoneDetectorEmitter2 then return end
+
+		-- only update every n seconds minimum sound time
+		local lastCheck = InfectionScanner.lastCheck
+		if not lastCheck then InfectionScanner.lastCheck = current_time return end
+		if current_time - lastCheck < 0.38 then return end
+		InfectionScanner.lastCheck = current_time
+
+		-- retrieve the first scanner
+		local inventory = client_player:getInventory()
+		local scanners = ArrayList.new()
+		inventory:getAllEvalRecurse(InfectionScanner.isScanner,scanners)
+		local scannersAmount = scanners:size()
+
+		-- check every scanners
+		if scannersAmount > 0 then
+			local scanner, charged, activated
+			for i = 0,scannersAmount - 1 do
+				-- verify that scanner is activated, charged and in spore detection mode
+				scanner = scanners:get(i)
+				activated = scanner:isActivated()
+				charged = scanner:getUsedDelta() ~= 0
+				if activated and charged and scanner:getModData().InfectionScanner_mode == "SporeDetector" then
+					-- check if scanner is valid to detect (attached or in hands)
+					local primaryItem = client_player:getPrimaryHandItem()
+					if scanner:getAttachedSlotType() or primaryItem and primaryItem == scanner then
+
+
+						--- IN BUILDING ---
+
+						if InfectionScanner.isSquareSporeZone(client_player, nil) then
+							emitter:playSound('InfectionScanner_SporeZone2')
+							addSound(nil, client_player:getX(), client_player:getY(), client_player:getZ(), 7, 7)
+						end
+
+
+
+						--- CLOSE TO A SPORE ZONE ---
+
+						InfectionScanner.highlightsSquares = {}
+						if not emitter:isPlaying('InfectionScanner_SporeZone2') then
+							-- detection radius
+							local radius = SandboxVars.InfectionScanner.SporeZoneRadius
+
+							-- get player coordinates
+							local p_x = client_player:getX()
+							local p_y = client_player:getY()
+							local p_z = client_player:getZ()
+
+							-- retrieve nearest spore zone square
+							local square,dist = InfectionScanner.findNearestValidSquare(p_x,p_y,p_z,radius,InfectionScanner.isSquareSporeZone)
+							InfectionScanner.AddHighlightSquare(square,{r = 1,g = 1,b = 1})
+
+							-- check if something is detected
+							if dist then
+								-- check if should bip
+								local lastBip = InfectionScanner.lastBip
+								local shouldBip = true
+								if lastBip then
+									local bipTime = lastBip.time
+									local diffTime = current_time - bipTime
+									local timeToBip = dist/radius * 3 - 1
+									if diffTime < timeToBip then
+										shouldBip = false
+									end
+								end
+
+								if shouldBip and not emitter:isPlaying('InfectionScanner_SporeZone1') then
+									emitter:playSound('InfectionScanner_SporeZone1')
+									addSound(nil, client_player:getX(), client_player:getY(), client_player:getZ(), 7, 7)
+									InfectionScanner.lastBip = {time = current_time, dist = dist}
+								end
+							elseif InfectionScanner.lastBip then
+								InfectionScanner.lastBip = nil
+							end
+						end
+
+
+
+						-- skip other scanners, no point in running all of them
+						break
+					end
+				end
+			end
+		end
+	end
 end
 
 ---When equiping the item, play a sound of it turning on.
@@ -361,7 +604,11 @@ end
 ---@param inventoryItem any
 InfectionScanner.OnEquipPrimary = function(character, inventoryItem)
 	if character == client_player and inventoryItem and inventoryItem:getFullType() == "TLOU.InfectionScanner" then
-		character:getEmitter():playSound('InfectionScanner_start')
-		addSound(nil, character:getX(), character:getY(), character:getZ(), 7, 7)
+		local activated = inventoryItem:isActivated()
+
+		if activated then
+			character:getEmitter():playSound('InfectionScanner_start')
+			addSound(nil, character:getX(), character:getY(), character:getZ(), 7, 7)
+		end
 	end
 end
