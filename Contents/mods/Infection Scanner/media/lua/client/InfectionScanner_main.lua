@@ -383,26 +383,58 @@ InfectionScanner.OnFillWorldObjectContextMenu = function(playerIndex, context, w
 end
 
 
----Determines the closest square and its distance to the start points based on a validation function.
+InfectionScanner.createCircleDirectionCheck = function(radius,directions)
+	-- create a direction table if doesn't exist already
+	directions = directions or table.newarray()
+
+	-- check from 1 to radius
+	local uniques = {}
+	local squares,x,y,uniqueKey,d
+	for r = 1,radius do
+		squares = table.newarray()
+
+		-- create coordinates of squares of the circle of radius r
+		for theta = 0, math.pi * 2, 0.01 do
+			-- Calculate x and y using the parametric form of a circle
+			x = round(r * math.cos(theta))
+			y = round(r * math.sin(theta))
+
+			-- get distance from center point
+			d = ( x*x + y*y )^0.5
+
+			-- verify these coordinates are not used for a direction check (to not have duplicate directions)
+			uniqueKey = x..","..y
+			if not uniques[uniqueKey] then
+				-- add these coordinates in this circle
+				uniques[uniqueKey] = true
+				table.insert(squares,table.newarray(x,y,d))
+			end
+		end
+
+		-- store them at this radius value
+		directions[r] = squares
+	end
+
+	return directions
+end
+
+InfectionScanner.DirectionCheck = InfectionScanner.createCircleDirectionCheck(50)
+
+---Determines the closest square and its distance to the start points based on a validation function `isValid`.
 ---
 ---Checks within a `radius` and in circle starting from the start points and going outward.
----Also checks one floor below and above, based on Project Zomboid height limits.
+---Checks every floors within `min_h` and `max_h`
 ---@param startX number
 ---@param startY number
----@param startZ number
 ---@param radius int
+---@param min_h int
+---@param max_h int
+---@param directions table
 ---@param isValid function
 ---@return IsoGridSquare|nil
 ---@return number|nil
-InfectionScanner.findNearestValidSquare = function(startX, startY , startZ, radius, isValid)
-	-- makes sure the player doesn't do weird shit when at the world height limit
-	local min_h = startZ - 1
-	min_h = min_h < 0 and 0 or min_h > 7 and 7 or min_h
-	local max_h = startZ + 1
-	max_h = max_h < 0 and 0 or max_h > 7 and 7 or max_h
-
+InfectionScanner.findNearestValidSquare = function(startX, startY , radius, min_h, max_h, directions, isValid)
 	-- iterate through every directions, starting at the nearest circle
-	local directions = InfectionScanner.DirectionCheck
 	local direction,increase,x,y,x_dir,y_dir,square,d
 	local nearestDistance, nearestSquare
 	for r = 1,radius do
@@ -428,7 +460,7 @@ InfectionScanner.findNearestValidSquare = function(startX, startY , startZ, radi
 					-- verify square is valid
 					if square and isValid(square) then
 						-- get distance
-						d = ( x_dir*x_dir + y_dir*y_dir )^0.5
+						d = increase[3]
 
 						-- keep track as nearest square
 						if nearestDistance then
@@ -451,6 +483,7 @@ InfectionScanner.findNearestValidSquare = function(startX, startY , startZ, radi
 		end
 	end
 
+	-- no squares found
 	return nil, nil
 end
 
@@ -540,7 +573,7 @@ InfectionScanner.OnTick = function(tick)
 
 						--- IN BUILDING ---
 
-						if InfectionScanner.isSquareSporeZone(client_player, nil) then
+						if InfectionScanner.isSquareSporeZone(client_player) then
 							emitter:playSound('InfectionScanner_SporeZone2')
 							addSound(nil, client_player:getX(), client_player:getY(), client_player:getZ(), 7, 7)
 						end
@@ -558,8 +591,15 @@ InfectionScanner.OnTick = function(tick)
 							local p_y = client_player:getY()
 							local p_z = client_player:getZ()
 
+							-- makes sure the player doesn't do weird shit when at the world height limit
+							-- to check a floor above and below
+							local min_h = p_z - 1
+							min_h = min_h < 0 and 0 or min_h > 7 and 7 or min_h
+							local max_h = p_z + 1
+							max_h = max_h < 0 and 0 or max_h > 7 and 7 or max_h
+
 							-- retrieve nearest spore zone square
-							local square,dist = InfectionScanner.findNearestValidSquare(p_x,p_y,p_z,radius,InfectionScanner.isSquareSporeZone)
+							local _,dist = InfectionScanner.findNearestValidSquare(p_x,p_y,radius,min_h,max_h,InfectionScanner.DirectionCheck,InfectionScanner.isSquareSporeZone)
 
 							-- check if something is detected
 							if dist then
@@ -569,13 +609,14 @@ InfectionScanner.OnTick = function(tick)
 								if lastBip then
 									local bipTime = lastBip.time
 									local diffTime = current_time - bipTime
-									local timeToBip = dist/radius * 3 - 1
+									dist = dist - dist%1
+									local timeToBip = (dist - 1)/5 * 3
 									if diffTime < timeToBip then
 										shouldBip = false
 									end
 								end
 
-								if shouldBip and not emitter:isPlaying('InfectionScanner_SporeZone1') then
+								if shouldBip then
 									emitter:playSound('InfectionScanner_SporeZone1')
 									addSound(nil, client_player:getX(), client_player:getY(), client_player:getZ(), 7, 7)
 									InfectionScanner.lastBip = {time = current_time, dist = dist}

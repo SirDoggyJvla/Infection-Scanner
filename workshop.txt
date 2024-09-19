@@ -21,7 +21,7 @@ description=
 description=[h3]Scanning mode:[/h3]
 description=Activate "Scanning" mode, equip the scanner and turn it on. Scan another human by right clicking them with the item in hands. Alternatively, you can scan yourself by right clicking on your character or the infection scanner.
 description=
-description=[h3]Spore Detection:[/h3]
+description=[h3]Spore Detection mode:[/h3]
 description=Activate "Spore Detection" (available when [url=https://steamcommunity.com/workshop/filedetails/?id=3006143351]Cordyceps Spore Zones[/url] is installed). Turn on the scanner and keep it in your main hand or attach it to your belt. The scanner will do a bip sound whenever you get close to a spore zone, this bip becomes stronger the closer you are. When inside the spore zone, the bip will sound more urgent and alarming.
 description=
 description=[h1]Where to find the item:[/h1]

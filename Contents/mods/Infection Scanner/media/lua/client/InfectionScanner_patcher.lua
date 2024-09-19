@@ -136,6 +136,7 @@ if getActivatedMods():contains("BB_SporeZones") then
             -- initialize building if not already
             if not (buildingSq_modData.isSporeZone or buildingSq_modData.visitedBefore) then
                 if buildingSq then
+                    buildingSq_modData.visitedBefore = true
                     if ZombRand(0,100) < InfectionScanner.SporeZoneChance then
                         CreateSporeZone(building, buildingDef, client_player, buildingSq, zoneSq)
                     else

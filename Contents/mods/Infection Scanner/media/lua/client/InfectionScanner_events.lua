@@ -54,4 +54,6 @@ Events.OnEquipPrimary.Add(InfectionScanner.OnEquipPrimary)
 -- end
 
 -- -- debug tool
--- Events.OnPostRender.Add(InfectionScanner.RenderHighLights)
+-- if isDebugEnabled() then
+--     Events.OnPostRender.Add(InfectionScanner.RenderHighLights)
+-- end
