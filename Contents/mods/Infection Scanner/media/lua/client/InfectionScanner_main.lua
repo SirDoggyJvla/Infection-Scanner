@@ -412,13 +412,14 @@ InfectionScanner.createCircleDirectionCheck = function(radius,directions)
 		end
 
 		-- store them at this radius value
+		table.sort(squares,function(a,b) return a[3] < b[3] end)
 		directions[r] = squares
 	end
 
 	return directions
 end
 
-InfectionScanner.DirectionCheck = InfectionScanner.createCircleDirectionCheck(50)
+InfectionScanner.DirectionCheck = InfectionScanner.createCircleDirectionCheck(20)
 
 ---Determines the closest square and its distance to the start points based on a validation function `isValid`.
 ---
@@ -435,8 +436,7 @@ InfectionScanner.DirectionCheck = InfectionScanner.createCircleDirectionCheck(50
 ---@return number|nil
 InfectionScanner.findNearestValidSquare = function(startX, startY , radius, min_h, max_h, directions, isValid)
 	-- iterate through every directions, starting at the nearest circle
-	local direction,increase,x,y,x_dir,y_dir,square,d
-	local nearestDistance, nearestSquare
+	local direction,increase,x,y,x_dir,y_dir,square
 	for r = 1,radius do
 		-- retrieve directions
 		direction = directions[r]
@@ -459,26 +459,9 @@ InfectionScanner.findNearestValidSquare = function(startX, startY , radius, min_
 
 					-- verify square is valid
 					if square and isValid(square) then
-						-- get distance
-						d = increase[3]
-
-						-- keep track as nearest square
-						if nearestDistance then
-							if d < nearestDistance then
-								nearestDistance = d
-								nearestSquare = square
-							end
-						else
-							nearestDistance = d
-							nearestSquare = square
-						end
+						return square,increase[3]
 					end
 				end
-			end
-
-			-- a square was found, stop here
-			if nearestSquare then
-				return nearestSquare, nearestDistance
 			end
 		end
 	end
@@ -591,7 +574,7 @@ InfectionScanner.OnTick = function(tick)
 							local p_y = client_player:getY()
 							local p_z = client_player:getZ()
 
-							-- makes sure the player doesn't do weird shit when at the world height limit
+							-- makes sure the code doesn't do weird shit when at the world height limit
 							-- to check a floor above and below
 							local min_h = p_z - 1
 							min_h = min_h < 0 and 0 or min_h > 7 and 7 or min_h
@@ -599,7 +582,10 @@ InfectionScanner.OnTick = function(tick)
 							max_h = max_h < 0 and 0 or max_h > 7 and 7 or max_h
 
 							-- retrieve nearest spore zone square
+							local timeSq = os.time()
 							local _,dist = InfectionScanner.findNearestValidSquare(p_x,p_y,radius,min_h,max_h,InfectionScanner.DirectionCheck,InfectionScanner.isSquareSporeZone)
+
+							print("nearestSquare = "..tostring(os.time() - timeSq))
 
 							-- check if something is detected
 							if dist then
