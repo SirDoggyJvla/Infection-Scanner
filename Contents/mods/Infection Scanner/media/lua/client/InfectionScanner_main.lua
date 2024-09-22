@@ -582,10 +582,7 @@ InfectionScanner.OnTick = function(tick)
 							max_h = max_h < 0 and 0 or max_h > 7 and 7 or max_h
 
 							-- retrieve nearest spore zone square
-							local timeSq = os.time()
 							local _,dist = InfectionScanner.findNearestValidSquare(p_x,p_y,radius,min_h,max_h,InfectionScanner.DirectionCheck,InfectionScanner.isSquareSporeZone)
-
-							print("nearestSquare = "..tostring(os.time() - timeSq))
 
 							-- check if something is detected
 							if dist then
