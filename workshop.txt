@@ -1,71 +1,71 @@
 version=1
 id=3332296598
 title=Infection Scanner
-description=[img]https://raw.githubusercontent.com/SirDoggyJvla/Infection-Scanner/main/Images/preview1.png[/img]
-description=
-description=[quote]
-description=The Infection Scanner is a military tool used by FEDRA in The Last of Us to verify if a human is infected with the cordyceps fungi.
-description=
-description=Ever wondered if you're truly safe from infection? Now you can know for sure!
-description=
-description=[h1]Features:[/h1]
-description=[list]
-description=[*] Scan Yourself: Worried about that scratch or bite? Use the scanner to detect if you're infected before it's too late.
-description=[*] Scan Other Survivors: No more guessing games. Check your companions to ensure they aren't hiding an infection!
-description=[*] Multiplayer Compatible: Scan your friends, or find out if that stranger is a walking death sentence!
-description=[/list]
-description=
-description=[h1]How to use:[/h1]
-description=Right click the item to scan yourself (with item in hands), change mode, change/remove battery.
-description=
-description=[h3]Scanning mode:[/h3]
-description=Activate "Scanning" mode, equip the scanner and turn it on. Scan another human by right clicking them with the item in hands. Alternatively, you can scan yourself by right clicking on your character or the infection scanner.
-description=
-description=[h3]Spore Detection mode:[/h3]
-description=Activate "Spore Detection" (available when [url=https://steamcommunity.com/workshop/filedetails/?id=3006143351]Cordyceps Spore Zones[/url] is installed). Turn on the scanner and keep it in your main hand or attach it to your belt. The scanner will do a bip sound whenever you get close to a spore zone, this bip becomes stronger the closer you are. When inside the spore zone, the bip will sound more urgent and alarming.
-description=
-description=[h1]Where to find the item:[/h1]
-description=The infection scanner is a rare equipment that can be found in military containers, notably with electronic items. It can be dismantled for a few electronic components. It can't be crafted.
-description=[/quote]
-description=
-description=[img]https://raw.githubusercontent.com/SirDoggyJvla/Infection-Scanner/main/Images/preview2.png[/img]
-description=[img]https://raw.githubusercontent.com/SirDoggyJvla/Infection-Scanner/main/Images/FEDRA.png[/img]
-description=
-description=[h1]Check out Project Overgrown other mods ![/h1]
-description=[table]
-description=[tr]
-description=[td] [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3248766883] [img]https://steamuserimages-a.akamaihd.net/ugc/2482131851436500023/D846A1158220487FAF0BA6BD62DE826A7F0F7E9E/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false[/img] [/url] [/td]
-description=[td]Play against [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3248766883]The Last of Us Infected[/url] and try to survive a low population scenario against hardcore zombies ! [/td]
-description=[/tr]
-description=[tr]
-description=[td] [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3302729836] [img]https://steamuserimages-a.akamaihd.net/ugc/2483257116309986571/A31945257F7BC26F774A6AF78AA45D28B6C61F11/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false[/img] [/url] [/td]
-description=[td]Use the guns of The Last of Us thanks to [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3302729836]The Last of Guns Remastered[/url] ! [/td]
-description=[/tr]
-description=[/table]
-description=
-description=[hr][/hr]
-description=
-description=[table]
-description=[tr]
-description=[td] [url=https://steamcommunity.com/workshop/filedetails/?id=3006143351] [img]https://steamuserimages-a.akamaihd.net/ugc/2192750207407278049/D52475547F9F8EDF55A4A8A25CA71C9D93084AC2/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false[/img] [/url] [/td]
-description=[td]Native compatibility with [url=https://steamcommunity.com/workshop/filedetails/?id=3006143351]Cordyceps Spore Zones[/url] ! Detect spore zones close by with the spore detection mode. [/td]
-description=[/tr]
-description=[/table]
-description=
-description=[img]https://raw.githubusercontent.com/SirDoggyJvla/Infection-Scanner/main/Images/FEDRA2.png[/img]
-description=
-description=[hr][/hr]
-description=
-description=[table]
-description=[tr]
-description=[td] [url=https://steamcommunity.com/workshop/filedetails/?id=3243131044] [img]https://steamuserimages-a.akamaihd.net/ugc/2397692528299518994/B476146CBD89A95C3D2172DDA92BC1106E757E30/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false[/img] [/url] [/td]
-description=[td]Native compatibility with [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3268487204]Bandits[/url] ! Allows you to check if friendlies (or enemies !) are infected. [/td]
-description=[/tr]
-description=[/table]
-description=
-description=[hr][/hr]
-description=[url=https://discord.gg/SReMnbV4V7][img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/PZmodCommBanner1.png[/img][/url]
-description=
-description=[url=https://discord.gg/VteSYrd4mW][img]https://raw.githubusercontent.com/SirDoggyJvla/Project-Overgrown/main/images/banners/server_banner.png[/img][/url]
+description=[img]https://raw.githubusercontent.com/SirDoggyJvla/Infection-Scanner/main/Images/preview1.png[/img]
+description=
+description=[quote]
+description=The Infection Scanner is a military tool used by FEDRA in The Last of Us to verify if a human is infected with the cordyceps fungi.
+description=
+description=Ever wondered if you're truly safe from infection? Now you can know for sure!
+description=
+description=[h1]Features:[/h1]
+description=[list]
+description=[*] Scan Yourself: Worried about that scratch or bite? Use the scanner to detect if you're infected before it's too late.
+description=[*] Scan Other Survivors: No more guessing games. Check your companions to ensure they aren't hiding an infection!
+description=[*] Multiplayer Compatible: Scan your friends, or find out if that stranger is a walking death sentence!
+description=[/list]
+description=
+description=[h1]How to use:[/h1]
+description=Right click the item to scan yourself (with item in hands), change mode, change/remove battery.
+description=
+description=[h3]Scanning mode:[/h3]
+description=Activate "Scanning" mode, equip the scanner and turn it on. Scan another human by right clicking them with the item in hands. Alternatively, you can scan yourself by right clicking on your character or the infection scanner.
+description=
+description=[h3]Spore Detection mode:[/h3]
+description=Activate "Spore Detection" (available when [url=https://steamcommunity.com/workshop/filedetails/?id=3006143351]Cordyceps Spore Zones[/url] is installed). Turn on the scanner and keep it in your main hand or attach it to your belt. The scanner will do a bip sound whenever you get close to a spore zone, this bip becomes stronger the closer you are. When inside the spore zone, the bip will sound more urgent and alarming.
+description=
+description=[h1]Where to find the item:[/h1]
+description=The infection scanner is a rare equipment that can be found in military containers, notably with electronic items. It can be dismantled for a few electronic components. It can't be crafted.
+description=[/quote]
+description=
+description=[img]https://raw.githubusercontent.com/SirDoggyJvla/Infection-Scanner/main/Images/preview2.png[/img]
+description=[img]https://raw.githubusercontent.com/SirDoggyJvla/Infection-Scanner/main/Images/FEDRA.png[/img]
+description=
+description=[h1]Check out Project Overgrown other mods ![/h1]
+description=[table]
+description=[tr]
+description=[td] [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3248766883] [img]https://steamuserimages-a.akamaihd.net/ugc/2482131851436500023/D846A1158220487FAF0BA6BD62DE826A7F0F7E9E/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false[/img] [/url] [/td]
+description=[td]Play against [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3248766883]The Last of Us Infected[/url] and try to survive a low population scenario against hardcore zombies ! [/td]
+description=[/tr]
+description=[tr]
+description=[td] [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3302729836] [img]https://steamuserimages-a.akamaihd.net/ugc/2483257116309986571/A31945257F7BC26F774A6AF78AA45D28B6C61F11/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false[/img] [/url] [/td]
+description=[td]Use the guns of The Last of Us thanks to [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3302729836]The Last of Guns Remastered[/url] ! [/td]
+description=[/tr]
+description=[/table]
+description=
+description=[hr][/hr]
+description=
+description=[table]
+description=[tr]
+description=[td] [url=https://steamcommunity.com/workshop/filedetails/?id=3006143351] [img]https://steamuserimages-a.akamaihd.net/ugc/2192750207407278049/D52475547F9F8EDF55A4A8A25CA71C9D93084AC2/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false[/img] [/url] [/td]
+description=[td]Native compatibility with [url=https://steamcommunity.com/workshop/filedetails/?id=3006143351]Cordyceps Spore Zones[/url] ! Detect spore zones close by with the spore detection mode. [/td]
+description=[/tr]
+description=[/table]
+description=
+description=[img]https://raw.githubusercontent.com/SirDoggyJvla/Infection-Scanner/main/Images/FEDRA2.png[/img]
+description=
+description=[hr][/hr]
+description=
+description=[table]
+description=[tr]
+description=[td] [url=https://steamcommunity.com/workshop/filedetails/?id=3243131044] [img]https://steamuserimages-a.akamaihd.net/ugc/2397692528299518994/B476146CBD89A95C3D2172DDA92BC1106E757E30/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false[/img] [/url] [/td]
+description=[td]Native compatibility with [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3268487204]Bandits[/url] ! Allows you to check if friendlies (or enemies !) are infected. [/td]
+description=[/tr]
+description=[/table]
+description=
+description=[hr][/hr]
+description=[url=https://discord.gg/SReMnbV4V7][img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/PZmodCommBanner1.png[/img][/url]
+description=
+description=[url=https://discord.gg/VteSYrd4mW][img]https://raw.githubusercontent.com/SirDoggyJvla/Project-Overgrown/main/images/banners/server_banner.png[/img][/url]
 tags=Build 41;Items;Military;Misc;Models;Multiplayer;Pop Culture
 visibility=public
