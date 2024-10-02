@@ -1,0 +1,11 @@
+ContextMenu_FR = {
+    ContextMenu_InfectionScanner_ScanYourself = "Scan yourself",
+    ContextMenu_InfectionScanner_ScanHuman = "Scan human",
+    ContextMenu_InfectionScanner_InsertBattery = "Insert battery",
+    ContextMenu_InfectionScanner_SwapBattery = "Swap battery",
+    ContextMenu_InfectionScanner_RemoveBattery = "Remove battery",
+
+    ContextMenu_InfectionScanner_ChangeMode = "Mode actuel: %1",
+    ContextMenu_InfectionScanner_ModeScanning = "Scan",
+    ContextMenu_InfectionScanner_ModeSporeDetector = "Détection de spores",
+}
