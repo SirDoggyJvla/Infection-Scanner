@@ -5,7 +5,7 @@ ContextMenu_FR = {
     ContextMenu_InfectionScanner_SwapBattery = "Swap battery",
     ContextMenu_InfectionScanner_RemoveBattery = "Remove battery",
 
-    ContextMenu_InfectionScanner_ChangeMode = "Current mode: %1",
-    ContextMenu_InfectionScanner_ModeScanning = "Scanning",
-    ContextMenu_InfectionScanner_ModeSporeDetector = "Détection de spore",
+    ContextMenu_InfectionScanner_ChangeMode = "Mode actuel: %1",
+    ContextMenu_InfectionScanner_ModeScanning = "Scan",
+    ContextMenu_InfectionScanner_ModeSporeDetector = "Détection de spores",
 }
