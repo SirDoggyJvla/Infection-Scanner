@@ -1,6 +1,6 @@
 version=1
 id=3332296598
-title=Infection Scanner
+title=[B41/B42] Infection Scanner
 description=[img]https://raw.githubusercontent.com/SirDoggyJvla/Infection-Scanner/main/Images/preview1.png[/img]
 description=
 description=[quote]
@@ -31,20 +31,6 @@ description=
 description=[img]https://raw.githubusercontent.com/SirDoggyJvla/Infection-Scanner/main/Images/preview2.png[/img]
 description=[img]https://raw.githubusercontent.com/SirDoggyJvla/Infection-Scanner/main/Images/FEDRA.png[/img]
 description=
-description=[h1]Check out Project Overgrown other mods ![/h1]
-description=[table]
-description=[tr]
-description=[td] [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3248766883] [img]https://steamuserimages-a.akamaihd.net/ugc/2482131851436500023/D846A1158220487FAF0BA6BD62DE826A7F0F7E9E/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false[/img] [/url] [/td]
-description=[td]Play against [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3248766883]The Last of Us Infected[/url] and try to survive a low population scenario against hardcore zombies ! [/td]
-description=[/tr]
-description=[tr]
-description=[td] [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3302729836] [img]https://steamuserimages-a.akamaihd.net/ugc/2483257116309986571/A31945257F7BC26F774A6AF78AA45D28B6C61F11/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false[/img] [/url] [/td]
-description=[td]Use the guns of The Last of Us thanks to [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3302729836]The Last of Guns Remastered[/url] ! [/td]
-description=[/tr]
-description=[/table]
-description=
-description=[hr][/hr]
-description=
 description=[table]
 description=[tr]
 description=[td] [url=https://steamcommunity.com/workshop/filedetails/?id=3006143351] [img]https://steamuserimages-a.akamaihd.net/ugc/2192750207407278049/D52475547F9F8EDF55A4A8A25CA71C9D93084AC2/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false[/img] [/url] [/td]
@@ -64,8 +50,23 @@ description=[/tr]
 description=[/table]
 description=
 description=[hr][/hr]
+description=
+description=[h1]Check out Project Overgrown other mods ![/h1]
+description=[table]
+description=[tr]
+description=[td] [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3248766883] [img]https://steamuserimages-a.akamaihd.net/ugc/2482131851436500023/D846A1158220487FAF0BA6BD62DE826A7F0F7E9E/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false[/img] [/url] [/td]
+description=[td]Play against [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3248766883]The Last of Us Infected[/url] and try to survive a low population scenario against hardcore zombies ! [/td]
+description=[/tr]
+description=[tr]
+description=[td] [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3302729836] [img]https://steamuserimages-a.akamaihd.net/ugc/2483257116309986571/A31945257F7BC26F774A6AF78AA45D28B6C61F11/?imw=5000&imh=5000&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=false[/img] [/url] [/td]
+description=[td]Use the guns of The Last of Us thanks to [url=https://steamcommunity.com/sharedfiles/filedetails/?id=3302729836]The Last of Guns Remastered[/url] ! [/td]
+description=[/tr]
+description=[/table]
+description=
+description=[hr][/hr]
+description=
 description=[url=https://discord.gg/SReMnbV4V7][img]https://raw.githubusercontent.com/Chuckleberry-Finn/chuckImages/main/PZmodCommBanner1.png[/img][/url]
 description=
 description=[url=https://discord.gg/VteSYrd4mW][img]https://raw.githubusercontent.com/SirDoggyJvla/Project-Overgrown/main/images/banners/server_banner.png[/img][/url]
-tags=Build 41;Items;Military;Misc;Models;Multiplayer;Pop Culture
+tags=Build 41;Build 42;Audio;Items;Military;Misc;Models;Multiplayer;Pop Culture
 visibility=public
