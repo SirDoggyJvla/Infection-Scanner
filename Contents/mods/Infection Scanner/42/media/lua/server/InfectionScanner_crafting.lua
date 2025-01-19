@@ -14,7 +14,7 @@ Handle the crafting recipe to dismantle the scanner.
 local randCraft = newrandom()
 function Recipe.OnCreate.DismantleInfectionScanner(craftRecipeData, player)
     local items = craftRecipeData:getAllConsumedItems();
-    local success = 50 + (player:getPerkLevel(Perks.Electricity)*5);
+    local success = 50 + (player:getPerkLevel(Perks.Electricity)*5)
     for _=1,randCraft:random(1,3) do
         local r = randCraft:random(1,3);
         if r==1 then
