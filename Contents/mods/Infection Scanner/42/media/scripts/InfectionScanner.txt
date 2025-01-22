@@ -50,7 +50,7 @@ module TLOU
         inputs
         {
             item 1 tags[Screwdriver] mode:keep flags[MayDegradeLight;NoBrokenItems],
-            item 1 [TLOU.InfectionScanner] mode:destroy itemcount,
+            item 1 [TLOU.InfectionScanner] mode:destroy flags[ItemCount],
         }
         outputs
         {
