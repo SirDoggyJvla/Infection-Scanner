@@ -60,7 +60,7 @@ end
 ---@param item InventoryItem
 ---@return boolean
 InfectionScanner.isBattery = function(item)
-	return item:getType() == "Battery" and item:getUseDelta() ~= 0
+	return item:getType() == "Battery" and item:getCurrentUsesFloat() ~= 0
 end
 
 
@@ -423,9 +423,9 @@ InfectionScanner.DirectionCheck = InfectionScanner.createCircleDirectionCheck(20
 ---Checks every floors within `min_h` and `max_h`
 ---@param startX number
 ---@param startY number
----@param radius int
----@param min_h int
----@param max_h int
+---@param radius integer
+---@param min_h integer
+---@param max_h integer
 ---@param directions table
 ---@param isValid function
 ---@return IsoGridSquare|nil
