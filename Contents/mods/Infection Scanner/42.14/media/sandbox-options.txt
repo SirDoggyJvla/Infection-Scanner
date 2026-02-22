@@ -1,0 +1,11 @@
+VERSION = 1,
+
+option InfectionScanner.SporeZoneRadius
+{
+    type = integer,
+    min = 1,
+    default = 5,
+    max = 20,
+    page = InfectionScanner,
+    translation = InfectionScanner_SporeZoneRadius,
+}
