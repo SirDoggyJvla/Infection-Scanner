@@ -1,0 +1,20 @@
+module Base {
+    craftRecipe DismantleInfectionScanner {
+        timedAction = DismantleElectrical,
+        Time = 150,
+        OnCreate = InfectionScannerRecipes.DismantleInfectionScanner,
+        OnTest = Recipe.OnTest.DismantleElectronics,
+        Tags = InHandCraft;Electrical,
+        category = Electrical,
+        xpAward = Electricity:20,
+        inputs
+        {
+            item 1 tags[Screwdriver] mode:keep flags[MayDegradeLight;NoBrokenItems],
+            item 1 [TLOU.InfectionScanner] mode:destroy flags[ItemCount],
+        }
+        outputs
+        {
+            item 1 Base.ElectronicsScrap,
+        }
+	}
+}

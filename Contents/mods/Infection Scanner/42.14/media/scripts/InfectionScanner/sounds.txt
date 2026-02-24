@@ -1,0 +1,31 @@
+module TLOU {
+    sound InfectionScanner_start
+    {
+        category = InfectionScanner, loop = false, is3D = true,
+        clip { file = media/sound/InfectionScanner/InfectionScanner_start.ogg, distanceMax = 2, volume = 0.80, }
+    }
+
+    sound InfectionScanner_run
+    {
+        category = InfectionScanner, loop = false, is3D = true,
+        clip { file = media/sound/InfectionScanner/InfectionScanner_run.ogg, distanceMax = 2, volume = 0.80, }
+    }
+
+    sound InfectionScanner_modeSwitch
+    {
+        category = InfectionScanner, loop = false, is3D = true,
+        clip { file = media/sound/InfectionScanner/InfectionScanner_modeSwitch.ogg, distanceMax = 2, volume = 0.80, }
+    }
+
+    sound InfectionScanner_SporeZone1
+    {
+        category = InfectionScanner, loop = false, is3D = true,
+        clip { file = media/sound/InfectionScanner/InfectionScanner_SporeZone1.ogg, distanceMax = 2, volume = 0.80, }
+    }
+
+    sound InfectionScanner_SporeZone2
+    {
+        category = InfectionScanner, loop = false, is3D = true,
+        clip { file = media/sound/InfectionScanner/InfectionScanner_SporeZone2.ogg, distanceMax = 2, volume = 0.80, }
+    }
+}

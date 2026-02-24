@@ -1,3 +1,0 @@
-Recipes_EN = {
-    Recipe_DismantleInfectionScanner = "Dismantle Infection Scanner",
-}
